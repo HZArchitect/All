@@ -1,0 +1,79 @@
+<html>
+<head>
+    <title>Wellcom to Biao Biao</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="<%=request.getContextPath()%>/bootstrap-3.3.7/css/bootstrap.css" type="text/css" />
+    <script src="<%=request.getContextPath()%>/js/jquery-3.3.1.min.js" type="text/javascript"  language="javascript"></script>
+    <title>Wellcom to Biao Biao</title>
+</head>
+
+<body>
+<form  id="form1" name="form1" method="post" action="">
+    <br class="container-fluid" id="container">
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <div class="row">
+        <div class="col-xs-6 col-sm-4"></div>
+        <div class="col-xs-6 col-sm-4">
+            <div class="form-group">
+                <label for="account">UserCode</label>
+                <input type="text" name="account" class="form-control" id="account" placeholder="UserCode">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" name="password" class="form-control" id="password" placeholder="Password">
+            </div>
+            <button type="button" onclick="sub()" class="btn btn-default">Submit</button>
+        </div>
+        <div class="col-xs-6 col-sm-4"></div>
+    </div>
+</form>
+</body>
+<script language="JavaScript">
+    $.fn.serializeObject = function()
+    {
+        var o = {};
+        var a = this.serializeArray();
+        $.each(a, function() {
+            if (o[this.name]) {
+                if (!o[this.name].push) {
+                    o[this.name] = [o[this.name]];
+                }
+                o[this.name].push(this.value || '');
+            } else {
+                o[this.name] = this.value || '';
+            }
+        });
+        return o;
+    };
+    function sub() {
+        debugger;
+        var json1 = $('#form1').serializeObject();
+        $.ajax({
+            type: "POST",
+            url: "/user/checkUser.json",
+            dataType: "json",
+            data: json1,
+            traditional: true,
+            xhrFields: {
+                withCredentials: true //session id 保持不变
+            },
+            success: function (tt) {
+                debugger;
+                alert(tt.data.sex);
+            },
+            error: function (data) {
+                alert("查询失败");
+            }
+        });
+    }
+</script>
+</html>

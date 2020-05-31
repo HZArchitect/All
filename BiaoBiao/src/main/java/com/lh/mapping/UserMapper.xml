@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lh.dao.UserDao">
+
+    <resultMap id="UserResult" type="com.lh.entity.User">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="username" jdbcType="VARCHAR" property="username" />
+        <result column="password" jdbcType="VARCHAR" property="password" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="sex" jdbcType="INTEGER" property="sex" />
+        <result column="role" jdbcType="INTEGER" property="role" />
+        <result column="updateTime" jdbcType="DATE" property="updateTime" />
+    </resultMap>
+
+    <!--<resultMap extends="UserResult" id="ResultMapWithBLOBs" type="com.lh.entity.User">-->
+        <!--<result column="extend_info" jdbcType="LONGVARCHAR" property="extendInfo" />-->
+    <!--</resultMap>-->
+
+    <sql id="base_info">
+      id, username, password, name, sex, role, updateTime
+    </sql>
+
+    <select id="getUser" parameterType="com.lh.entity.User" resultMap="UserResult">
+        select
+        <include refid="base_info" />
+        from user
+        where username = #{username,jdbcType=VARCHAR}
+        and password = #{password,jdbcType=VARCHAR}
+    </select>
+
+    <delete id="deleteUser" parameterType="com.lh.entity.User">
+      delete from user
+      where id = #{id,jdbcType=VARCHAR}
+    </delete>
+
+    <insert id="addUser" parameterType="com.lh.entity.User">
+      insert into user (id, username, password,name, sex, role,updateTime)
+      values (
+      #{id,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
+      #{name,jdbcType=VARCHAR}, #{sex,jdbcType=INTEGER}, #{role,jdbcType=INTEGER},
+      #{updateTime,jdbcType=DATE}
+      )
+    </insert>
+
+    <insert id="insertBatch" parameterType="java.util.List" >
+        insert into user (id, account, password,
+        name, sex, identity_card_number,
+        mobile, email,
+        avatar, actor, editor,
+        created_time, modified_time, deleted,
+        extend_info) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.id,jdbcType=VARCHAR}, #{item.account,jdbcType=VARCHAR}, #{item.password,jdbcType=VARCHAR},
+            #{item.name,jdbcType=VARCHAR}, #{item.sex,jdbcType=VARCHAR}, #{item.identityCardNumber,jdbcType=VARCHAR},
+            #{item.mobile,jdbcType=VARCHAR}, #{item.email,jdbcType=VARCHAR},
+            #{item.avatar,jdbcType=VARCHAR}, #{item.actor,jdbcType=VARCHAR}, #{item.editor,jdbcType=VARCHAR},
+            #{item.createdTime,jdbcType=TIMESTAMP}, #{item.modifiedTime,jdbcType=TIMESTAMP}, #{item.deleted,jdbcType=BIT},
+            #{item.extendInfo,jdbcType=LONGVARCHAR})
+        </foreach>
+    </insert>
+
+    <insert id="insertSelective" parameterType="com.lh.entity.User">
+        insert into user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="account != null">
+                account,
+            </if>
+            <if test="password != null">
+                password,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="sex != null">
+                sex,
+            </if>
+            <if test="identityCardNumber != null">
+                identity_card_number,
+            </if>
+            <if test="mobile != null">
+                mobile,
+            </if>
+            <if test="email != null">
+                email,
+            </if>
+            <if test="avatar != null">
+                avatar,
+            </if>
+            <if test="actor != null">
+                actor,
+            </if>
+            <if test="editor != null">
+                editor,
+            </if>
+            <if test="createdTime != null">
+                created_time,
+            </if>
+            <if test="modifiedTime != null">
+                modified_time,
+            </if>
+            <if test="deleted != null">
+                deleted,
+            </if>
+            <if test="extendInfo != null">
+                extend_info,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=VARCHAR},
+            </if>
+            <if test="account != null">
+                #{account,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="sex != null">
+                #{sex,jdbcType=VARCHAR},
+            </if>
+            <if test="identityCardNumber != null">
+                #{identityCardNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="mobile != null">
+                #{mobile,jdbcType=VARCHAR},
+            </if>
+            <if test="email != null">
+                #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="avatar != null">
+                #{avatar,jdbcType=VARCHAR},
+            </if>
+            <if test="actor != null">
+                #{actor,jdbcType=VARCHAR},
+            </if>
+            <if test="editor != null">
+                #{editor,jdbcType=VARCHAR},
+            </if>
+            <if test="createdTime != null">
+                #{createdTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifiedTime != null">
+                #{modifiedTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleted != null">
+                #{deleted,jdbcType=BIT},
+            </if>
+            <if test="extendInfo != null">
+                #{extendInfo,jdbcType=LONGVARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateUser" parameterType="com.lh.entity.User">
+        update user
+        <set>
+            <if test="account != null">
+                account = #{account,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                password = #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="sex != null">
+                sex = #{sex,jdbcType=VARCHAR},
+            </if>
+            <if test="identityCardNumber != null">
+                identity_card_number = #{identityCardNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="mobile != null">
+                mobile = #{mobile,jdbcType=VARCHAR},
+            </if>
+            <if test="email != null">
+                email = #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="avatar != null">
+                avatar = #{avatar,jdbcType=VARCHAR},
+            </if>
+            <if test="actor != null">
+                actor = #{actor,jdbcType=VARCHAR},
+            </if>
+            <if test="editor != null">
+                editor = #{editor,jdbcType=VARCHAR},
+            </if>
+            <if test="createdTime != null">
+                created_time = #{createdTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifiedTime != null">
+                modified_time = #{modifiedTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleted != null">
+                deleted = #{deleted,jdbcType=BIT},
+            </if>
+            <if test="extendInfo != null">
+                extend_info = #{extendInfo,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+
+</mapper>

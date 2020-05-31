@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+                        http://www.springframework.org/schema/context
+                        http://www.springframework.org/schema/context/spring-context-3.1.xsd
+                        http://www.springframework.org/schema/mvc
+                        http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
+    <!-- 自动扫描该包，使SpringMVC认为包下用了@Controller注解的类是控制器 -->
+    <context:component-scan base-package="com.lh.controller" />
+    <mvc:default-servlet-handler />
+    <mvc:annotation-driven>
+        <mvc:message-converters register-defaults="true">
+            <bean class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">
+                <property name="supportedMediaTypes">
+                    <list>
+                        <value>text/html;charset=UTF-8</value>
+                        <value>application/json</value>
+                    </list>
+                </property>
+                <property name="features">
+                    <list>
+                        <!-- 输出key时是否使用双引号 -->
+                        <value>QuoteFieldNames</value>
+                        <!-- 是否输出值为null的字段 -->
+                        <!-- <value>WriteMapNullValue</value> -->
+                        <!-- 数值字段如果为null,输出为0,而非null -->
+                        <value>WriteNullNumberAsZero</value>
+                        <!-- List字段如果为null,输出为[],而非null -->
+                        <value>WriteNullListAsEmpty</value>
+                        <!-- 字符类型字段如果为null,输出为"",而非null -->
+                        <value>WriteNullStringAsEmpty</value>
+                        <!-- Boolean字段如果为null,输出为false,而非null -->
+                        <value>WriteNullBooleanAsFalse</value>
+                        <!-- null String不输出  -->
+                        <value>WriteNullStringAsEmpty</value>
+                        <!-- null String也要输出  -->
+                        <!-- <value>WriteMapNullValue</value> -->
+
+                        <!-- Date的日期转换器 -->
+                        <value>WriteDateUseDateFormat</value>
+                    </list>
+                </property>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+    <!-- 定义跳转的文件的前后缀 ，视图模式配置-->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <!-- controller最后返回的值xx，则页面即是webapp/jsp/xx.jsp -->
+        <property name="prefix" value="/jsp/" />
+        <property name="suffix" value=".jsp" />
+    </bean>
+
+    <bean id="multipartResolver"
+          class="org.springframework.web.multipart.commons.CommonsMultipartResolver"
+          p:defaultEncoding="UTF-8">
+        <property name="maxUploadSize">
+            <value>104857600</value>
+        </property>
+        <property name="maxInMemorySize">
+            <value>4096</value>
+        </property>
+    </bean>
+
+</beans>

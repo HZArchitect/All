@@ -1,0 +1,57 @@
+线程安全
+并发编程的三个概念
+1、原子性--原子性一个操作是不可中断的。即使是多个线程一起执行，一个操作一旦开始，就不会被其他线程干扰。
+2、可见性--可见性是指当一个线程修改了某一个共享变量的值，其他线程是否能够立即知道这个修改。
+       成因：2.1、编译器优化 2.2、硬件优化（如写吸收、批操作）
+3、有序性--CPU可能会对代码优化而进行指令重排导致多线程中执行顺序和预期不同。
+
+
+concurrent包是基于AQS (AbstractQueuedSynchronizer)框架的，AQS框架借助于两个类：
+    1、Unsafe（提供CAS操作）
+    2、LockSupport（提供park/unpark操作）
+    因此，LockSupport非常重要。
+
+1、重入锁ReentrantLock lock
+可重入:lock一次代表这个线程拿到一个许可，后面需要释放这个许可。锁几次就是几个许可，需要释放几次否则阻塞
+可中断:lock.interruptibly 用这个方法加锁可以让线程响应中断
+可限时:lock.tryLock(5, TimeUnit.SECONDS)  限时内获取锁，失败则放弃。
+公平锁:实例加参数true，不加默认false不公平，公平锁可保证线程先到先得。
+正常情况下线程竞争锁是不公平的，可能导致饥饿。
+公平锁性能更差，因为要维护先到先得。没有特殊需求不用这个功能。
+
+ReentrantLock原理
+    1、CAS  核心：通过cas拿锁。判断这个锁是否能够改变状态，可以则获取，不行则再次重试
+    2、等待队列   等待队列来维护要获取锁的线程
+    3、park()    利用LockSupport让线程挂起，可以运行则从等待队列中让这个线程释放unpark()
+
+2、Condition condition = lock.newCondition();
+condition类似于Object的 wait 和 notify功能，用来配合reentrantLock在多线程中调度工作
+
+3、倒数检查器 CountDownLatch end = new CountDownLatch(10)；
+主线程end.await();即可进入等待
+所有线程end.countDown();完毕主线程才可继续执行
+
+4、屏障 CyclicBarrier
+cyclic.await(); 设置屏障等待所有线程都执行到屏障点才能一起往下走。
+
+5、LockSupport
+LockSupport.park(thread对象)和LockSupport.unpark(Thread thread)调用的是Unsafe中的native代码。
+park函数是将当前调用Thread阻塞，而unpark函数则是将指定线程Thread唤醒。
+与Object类的wait/notify机制相比，park/unpark有两个优点：
+    1、以thread为操作对象更符合阻塞线程的直观定义
+    2、操作更精准，可以准确地唤醒某一个线程（notify随机唤醒一个线程，notifyAll唤醒所有等待的线程），增加了灵活性。
+
+6、读写锁
+ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
+Lock readLock = readWriteLock.readLock();
+Lock writeLock = readWriteLock.writeLock();
+用法和重入锁类似。读读不互斥。读阻塞写，写也会阻塞读。写写互斥。
+
+7、信号量Semaphore  同时允许几个线程进入临界区执行。
+共享锁：运行多个线程同时共享临界区。若设置1，相当于上锁。
+让多线程操作资源分配更合理
+semap.acquire();获得许可，相当于得到一把锁。若设置数量，则可获得多个许可
+semap.release();
+
+
+
