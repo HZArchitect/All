@@ -9,7 +9,7 @@ import io.netty.handler.timeout.IdleStateEvent;
 
 /**
  * 心跳服务端消息处理
- * @Auth
+ * @Auth lh
  */
 public class ServerHandler extends SimpleChannelInboundHandler<String> {
 
